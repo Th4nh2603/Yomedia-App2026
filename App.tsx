@@ -15,6 +15,8 @@ import History from './pages/History';
 import ImageGenerator from './pages/ImageGenerator';
 import Login from './pages/Login';
 import BuildDemo from './pages/BuildDemo';
+import ManageDemo from './pages/ManageDemo';
+import Bar from './pages/Bar';
 
 const App: React.FC = () => {
   return (
@@ -32,7 +34,9 @@ const App: React.FC = () => {
                       <Route path="/chat" element={<Chat />} />
                       <Route path="/vision" element={<Vision />} />
                       <Route path="/image-generator" element={<ImageGenerator />} />
+                      <Route path="/manage-demo" element={<ManageDemo />} />
                       <Route path="/build-demo" element={<BuildDemo />} />
+                      <Route path="/bar" element={<Bar />} />
                       <Route path="/cinema" element={<Cinema />} />
                       <Route path="/live" element={<Live />} />
                       <Route path="/history" element={<History />} />

@@ -13,6 +13,7 @@ import {
   ExclamationTriangleIcon,
   ArrowPathIcon
 } from '@heroicons/react/24/outline';
+import demoConfig from '../data/demoConfig.json';
 
 interface ErrorState {
   message: string;
@@ -30,13 +31,17 @@ interface UploadedFile {
 }
 
 const BuildDemo: React.FC = () => {
+  const brands = (demoConfig as any).ListBrands ?? [];
+  const years = (demoConfig as any).ListYears ?? [];
+  const months = (demoConfig as any).ListMonth ?? [];
+
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [config, setConfig] = useState({
-    model: 'gemini-pro',
-    quality: 'high',
-    mode: 'standard'
+    model: '',
+    quality: years[0]?.id ?? 'standard',
+    mode: months[0]?.id ?? 'standard'
   });
   const [sourceUrl, setSourceUrl] = useState('');
   const [outputLink, setOutputLink] = useState<string | null>(null);
@@ -133,6 +138,16 @@ const BuildDemo: React.FC = () => {
     setError(null);
     setIsProcessing(true);
     setOutputLink(null);
+
+    // Require model selection
+    if (!config.model) {
+      setError({
+        message: 'Please select a Model Intelligence before processing.',
+        type: 'validation',
+      });
+      setIsProcessing(false);
+      return;
+    }
 
     // Validation: Source
     if (files.length === 0 && !sourceUrl) {
@@ -294,7 +309,7 @@ const BuildDemo: React.FC = () => {
               <div className="flex items-center gap-2 ml-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4cceac]" />
                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-[#a3a3a3]">
-                  Model Intelligence
+                  Brand
                 </label>
               </div>
               <div className="relative group">
@@ -303,9 +318,14 @@ const BuildDemo: React.FC = () => {
                   onChange={(e) => setConfig({...config, model: e.target.value})}
                   className="w-full bg-[#141b2d] border border-white/5 rounded-2xl py-4 px-5 text-sm font-bold text-white outline-none focus:border-[#4cceac]/50 transition-all appearance-none cursor-pointer shadow-xl"
                 >
-                  <option value="gemini-pro">Gemini 3.1 Pro</option>
-                  <option value="gemini-flash">Gemini 3 Flash</option>
-                  <option value="imagen-4">Imagen 4.0</option>
+                  <option value="" disabled>
+                    Select model...
+                  </option>
+                  {brands.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.label}
+                    </option>
+                  ))}
                 </select>
                 <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
                   <BoltIcon className="w-4 h-4 text-[#4cceac]" />
@@ -317,7 +337,7 @@ const BuildDemo: React.FC = () => {
               <div className="flex items-center gap-2 ml-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-[#a3a3a3]">
-                  Output Quality
+                  Year
                 </label>
               </div>
               <div className="relative group">
@@ -326,9 +346,11 @@ const BuildDemo: React.FC = () => {
                   onChange={(e) => setConfig({...config, quality: e.target.value})}
                   className="w-full bg-[#141b2d] border border-white/5 rounded-2xl py-4 px-5 text-sm font-bold text-white outline-none focus:border-[#4cceac]/50 transition-all appearance-none cursor-pointer shadow-xl"
                 >
-                  <option value="standard">Standard (1K)</option>
-                  <option value="high">High Definition (2K)</option>
-                  <option value="ultra">Ultra Studio (4K)</option>
+                  {years.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.label}
+                    </option>
+                  ))}
                 </select>
                 <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
                   <PhotoIcon className="w-4 h-4 text-indigo-400" />
@@ -340,7 +362,7 @@ const BuildDemo: React.FC = () => {
               <div className="flex items-center gap-2 ml-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                 <label className="text-[9px] font-black uppercase tracking-[0.3em] text-[#a3a3a3]">
-                  Processing Mode
+                  Month
                 </label>
               </div>
               <div className="relative group">
@@ -349,9 +371,11 @@ const BuildDemo: React.FC = () => {
                   onChange={(e) => setConfig({...config, mode: e.target.value})}
                   className="w-full bg-[#141b2d] border border-white/5 rounded-2xl py-4 px-5 text-sm font-bold text-white outline-none focus:border-[#4cceac]/50 transition-all appearance-none cursor-pointer shadow-xl"
                 >
-                  <option value="standard">Standard Queue</option>
-                  <option value="priority">Priority Turbo</option>
-                  <option value="batch">Batch Optimized</option>
+                  {months.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.label}
+                    </option>
+                  ))}
                 </select>
                 <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
                   <SignalIcon className="w-4 h-4 text-rose-400" />
@@ -414,133 +438,11 @@ const BuildDemo: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          {/* Performance Dashboard */}
-          <div className="mt-10">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#a3a3a3] ml-1">
-                System Performance Monitor
-              </h3>
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full animate-pulse ${metrics.health === 'Optimal' ? 'bg-[#4cceac]' : 'bg-amber-500'}`} />
-                <span className="text-[10px] font-bold text-white uppercase tracking-widest">{metrics.health}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-[#141b2d] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:border-[#4cceac]/30 transition-all duration-500">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#4cceac] to-transparent opacity-30" />
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-[#4cceac]/10 rounded-xl">
-                    <CpuChipIcon className="w-5 h-5 text-[#4cceac]" />
-                  </div>
-                  <span className="text-[8px] font-black text-[#a3a3a3] uppercase tracking-[0.2em]">GPU Core</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white tracking-tighter">{Math.round(metrics.gpu)}</span>
-                  <span className="text-xs font-bold text-[#4cceac] opacity-60">%</span>
-                </div>
-                <div className="mt-5 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    animate={{ width: `${metrics.gpu}%` }}
-                    className={`h-full rounded-full ${metrics.gpu > 80 ? 'bg-amber-500' : 'bg-[#4cceac]'}`}
-                  />
-                </div>
-              </div>
-
-              <div className="bg-[#141b2d] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:border-indigo-500/30 transition-all duration-500">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-transparent opacity-30" />
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-indigo-500/10 rounded-xl">
-                    <ServerIcon className="w-5 h-5 text-indigo-400" />
-                  </div>
-                  <span className="text-[8px] font-black text-[#a3a3a3] uppercase tracking-[0.2em]">VRAM Alloc</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white tracking-tighter">{metrics.ram.toFixed(1)}</span>
-                  <span className="text-xs font-bold text-indigo-400 opacity-60">GB</span>
-                </div>
-                <div className="mt-5 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    animate={{ width: `${(metrics.ram / 16) * 100}%` }}
-                    className="h-full bg-indigo-500 rounded-full"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-[#141b2d] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:border-rose-500/30 transition-all duration-500">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-transparent opacity-30" />
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-rose-500/10 rounded-xl">
-                    <SignalIcon className="w-5 h-5 text-rose-400" />
-                  </div>
-                  <span className="text-[8px] font-black text-[#a3a3a3] uppercase tracking-[0.2em]">Net Latency</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white tracking-tighter">{Math.round(metrics.latency)}</span>
-                  <span className="text-xs font-bold text-rose-400 opacity-60">ms</span>
-                </div>
-                <div className="mt-5 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    animate={{ width: `${Math.min(100, (metrics.latency / 200) * 100)}%` }}
-                    className={`h-full rounded-full ${metrics.latency > 100 ? 'bg-rose-500' : 'bg-rose-400'}`}
-                  />
-                </div>
-              </div>
-
-              <div className="bg-[#141b2d] border border-white/5 rounded-[2rem] p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-500">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent opacity-30" />
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-emerald-500/10 rounded-xl">
-                    <BoltIcon className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <span className="text-[8px] font-black text-[#a3a3a3] uppercase tracking-[0.2em]">IO Flow</span>
-                </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white tracking-tighter">{isProcessing ? '1.2' : '0.0'}</span>
-                  <span className="text-xs font-bold text-emerald-400 opacity-60">GB/s</span>
-                </div>
-                <div className="mt-5 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    animate={{ width: isProcessing ? '75%' : '0%' }}
-                    className="h-full bg-emerald-500 rounded-full"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Live Feed */}
-            <div className="bg-[#141b2d] border border-white/5 rounded-3xl p-6 font-mono">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] font-bold text-[#4cceac] uppercase tracking-widest flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#4cceac] animate-pulse" />
-                  Live System Feed
-                </span>
-                <span className="text-[10px] text-[#3d465d] font-bold uppercase tracking-widest">Buffer: 1024kb</span>
-              </div>
-              <div className="space-y-2 h-32 overflow-hidden text-[10px] text-[#a3a3a3]">
-                <p className="flex gap-4"><span className="text-[#4cceac]">[OK]</span> Initializing neural engine v4.2.0...</p>
-                <p className="flex gap-4"><span className="text-[#4cceac]">[OK]</span> Handshaking with Gemini 3.1 Pro cluster...</p>
-                <p className="flex gap-4"><span className="text-[#4cceac]">[OK]</span> Allocating 2.4GB VRAM for processing...</p>
-                <p className="flex gap-4"><span className="text-indigo-400">[INFO]</span> System health check: Optimal</p>
-                <p className="flex gap-4"><span className="text-[#4cceac]">[OK]</span> Ready for asset ingestion.</p>
-                {isProcessing && (
-                  <motion.p 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex gap-4 text-white"
-                  >
-                    <span className="text-emerald-400">[BUSY]</span> Processing assets at 1.2GB/s...
-                  </motion.p>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Action Buttons */}
           <div className="mt-12 flex gap-6">
             <button 
               onClick={handleProcess}
-              disabled={files.length === 0 && !sourceUrl || isProcessing}
+              disabled={!config.model || (files.length === 0 && !sourceUrl) || isProcessing}
               className="flex-1 bg-gradient-to-r from-[#4cceac] to-[#3da58a] hover:from-[#3da58a] hover:to-[#4cceac] disabled:from-[#3d465d] disabled:to-[#3d465d] disabled:cursor-not-allowed text-[#141b2d] font-black py-5 rounded-3xl transition-all shadow-[0_20px_40px_rgba(76,206,172,0.15)] flex items-center justify-center gap-3 uppercase tracking-widest text-xs italic"
             >
               {isProcessing ? (
