@@ -2,6 +2,7 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'motion/react';
 import { 
   MagnifyingGlassIcon, 
@@ -9,11 +10,13 @@ import {
   SunIcon,
   BellIcon, 
   Cog6ToothIcon, 
-  UserIcon 
+  UserIcon,
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   return (
@@ -21,8 +24,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <motion.div 
         animate={{ 
-          marginLeft: isCollapsed ? 80 : 256,
-          transition: { type: "spring", stiffness: 300, damping: 30 }
+          marginLeft: isCollapsed ? 84 : 280,
+          transition: { type: "spring", stiffness: 400, damping: 40 }
         }}
         className="flex-1 flex flex-col min-h-screen"
       >
@@ -46,7 +49,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
               { icon: theme === 'dark' ? SunIcon : MoonIcon, onClick: toggleTheme, id: 'theme' },
               { icon: BellIcon, id: 'notifications' },
               { icon: Cog6ToothIcon, id: 'settings' },
-              { icon: UserIcon, id: 'profile' }
+              { icon: UserIcon, id: 'profile' },
+              { icon: ArrowRightOnRectangleIcon, onClick: logout, id: 'logout' }
             ].map((item, idx) => (
               <motion.button
                 key={item.id}
@@ -56,7 +60,9 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.05)' }}
                 whileTap={{ scale: 0.9 }}
                 onClick={item.onClick}
-                className="p-2.5 rounded-xl text-[#a3a3a3] hover:text-[#e0e0e0] transition-colors relative"
+                className={`p-2.5 rounded-xl transition-colors relative ${
+                  item.id === 'logout' ? 'text-red-400 hover:text-red-300' : 'text-[#a3a3a3] hover:text-[#e0e0e0]'
+                }`}
               >
                 <item.icon className="w-5 h-5" />
                 {item.id === 'notifications' && (
@@ -72,7 +78,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex-1 p-10"
+          className="flex-1 p-10 overflow-y-auto custom-scrollbar"
         >
           {children}
         </motion.main>

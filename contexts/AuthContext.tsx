@@ -16,10 +16,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>({ name: 'Nova User', email: 'user@nova.ai' });
+  const [user, setUser] = useState<User | null>(null);
   const isAuthenticated = !!user;
 
-  const login = () => setUser({ name: 'Nova User', email: 'user@nova.ai' });
+  const login = () => setUser({ name: 'thanh', email: 'thanh26031994@gmail.com' });
   const logout = () => setUser(null);
 
   return (

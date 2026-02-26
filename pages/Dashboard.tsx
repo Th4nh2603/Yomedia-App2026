@@ -1,12 +1,17 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import DataTable from '../components/DataTable';
 import { 
   MagnifyingGlassIcon, 
   CloudArrowDownIcon, 
   PrinterIcon, 
   ViewColumnsIcon, 
-  FunnelIcon 
+  FunnelIcon,
+  SparklesIcon,
+  PhotoIcon,
+  ChatBubbleBottomCenterTextIcon
 } from '@heroicons/react/24/outline';
 
 const Dashboard: React.FC = () => {
@@ -23,23 +28,56 @@ const Dashboard: React.FC = () => {
     FLIGHT: ''
   }));
 
+  const quickActions = [
+    { name: 'AI Chat', path: '/chat', icon: ChatBubbleBottomCenterTextIcon, color: 'bg-indigo-500/10 text-indigo-400' },
+    { name: 'Generate Image', path: '/image-generator', icon: PhotoIcon, color: 'bg-[#4cceac]/10 text-[#4cceac]' },
+    { name: 'Vision AI', path: '/vision', icon: SparklesIcon, color: 'bg-amber-500/10 text-amber-400' },
+  ];
+
   return (
-    <div className="flex flex-col gap-8">
-      <header className="flex flex-col">
-        <h1 className="text-3xl font-bold text-[#e0e0e0]">DEMO</h1>
-        <p className="text-[#4cceac] text-sm">Showing all Demo</p>
+    <div className="flex flex-col gap-10">
+      <header className="flex justify-between items-end">
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-bold text-[#e0e0e0] tracking-tight">DEMO</h1>
+          <p className="text-[#4cceac] font-medium mt-1">Welcome to your AI Creative Suite</p>
+        </div>
       </header>
 
-      <div className="flex justify-end items-center gap-4 mb-2">
-        <MagnifyingGlassIcon className="w-5 h-5 text-[#e0e0e0] cursor-pointer" />
-        <CloudArrowDownIcon className="w-5 h-5 text-[#e0e0e0] cursor-pointer" />
-        <PrinterIcon className="w-5 h-5 text-[#e0e0e0] cursor-pointer" />
-        <ViewColumnsIcon className="w-5 h-5 text-[#e0e0e0] cursor-pointer" />
-        <FunnelIcon className="w-5 h-5 text-[#e0e0e0] cursor-pointer" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {quickActions.map((action, idx) => (
+          <Link key={action.name} to={action.path}>
+            <motion.div
+              whileHover={{ y: -5, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-6 rounded-3xl border border-white/5 bg-[#1f2a40]/50 backdrop-blur-sm shadow-xl flex items-center gap-4 group transition-all`}
+            >
+              <div className={`p-3 rounded-2xl ${action.color} group-hover:scale-110 transition-transform`}>
+                <action.icon className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-[#e0e0e0] font-bold">{action.name}</h3>
+                <p className="text-[#a3a3a3] text-xs mt-0.5">Quick access to AI tools</p>
+              </div>
+            </motion.div>
+          </Link>
+        ))}
       </div>
 
-      <div className="bg-[#1f2a40] rounded-lg border border-[#3d465d] overflow-hidden">
-        <DataTable headers={headers} data={data} />
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-[#e0e0e0]">Recent Data</h2>
+          <div className="flex items-center gap-4">
+            <MagnifyingGlassIcon className="w-5 h-5 text-[#a3a3a3] hover:text-[#e0e0e0] cursor-pointer transition-colors" />
+            <CloudArrowDownIcon className="w-5 h-5 text-[#a3a3a3] hover:text-[#e0e0e0] cursor-pointer transition-colors" />
+            <PrinterIcon className="w-5 h-5 text-[#a3a3a3] hover:text-[#e0e0e0] cursor-pointer transition-colors" />
+            <ViewColumnsIcon className="w-5 h-5 text-[#a3a3a3] hover:text-[#e0e0e0] cursor-pointer transition-colors" />
+            <FunnelIcon className="w-5 h-5 text-[#a3a3a3] hover:text-[#e0e0e0] cursor-pointer transition-colors" />
+          </div>
+        </div>
+
+        <div className="bg-[#1f2a40] rounded-3xl border border-[#3d465d] overflow-hidden shadow-2xl">
+          <DataTable headers={headers} data={data} />
+        </div>
       </div>
     </div>
   );

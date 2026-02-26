@@ -12,6 +12,9 @@ import Vision from './pages/Vision';
 import Cinema from './pages/Cinema';
 import Live from './pages/Live';
 import History from './pages/History';
+import ImageGenerator from './pages/ImageGenerator';
+import Login from './pages/Login';
+import BuildDemo from './pages/BuildDemo';
 
 const App: React.FC = () => {
   return (
@@ -19,36 +22,25 @@ const App: React.FC = () => {
       <AuthProvider>
         <ErrorProvider>
           <HashRouter>
-            <DashboardLayout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/chat" element={
-                  <PrivateRoute>
-                    <Chat />
-                  </PrivateRoute>
-                } />
-                <Route path="/vision" element={
-                  <PrivateRoute>
-                    <Vision />
-                  </PrivateRoute>
-                } />
-                <Route path="/cinema" element={
-                  <PrivateRoute>
-                    <Cinema />
-                  </PrivateRoute>
-                } />
-                <Route path="/live" element={
-                  <PrivateRoute>
-                    <Live />
-                  </PrivateRoute>
-                } />
-                <Route path="/history" element={
-                  <PrivateRoute>
-                    <History />
-                  </PrivateRoute>
-                } />
-              </Routes>
-            </DashboardLayout>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/*" element={
+                <PrivateRoute>
+                  <DashboardLayout>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/chat" element={<Chat />} />
+                      <Route path="/vision" element={<Vision />} />
+                      <Route path="/image-generator" element={<ImageGenerator />} />
+                      <Route path="/build-demo" element={<BuildDemo />} />
+                      <Route path="/cinema" element={<Cinema />} />
+                      <Route path="/live" element={<Live />} />
+                      <Route path="/history" element={<History />} />
+                    </Routes>
+                  </DashboardLayout>
+                </PrivateRoute>
+              } />
+            </Routes>
           </HashRouter>
         </ErrorProvider>
       </AuthProvider>
