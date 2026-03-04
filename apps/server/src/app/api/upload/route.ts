@@ -134,6 +134,10 @@ export async function GET(request: NextRequest) {
         content = lines.join("\n");
       }
 
+      const convertedImages = imageLineIndexes
+        .filter((item) => item.lineIndex >= 0)
+        .map((item) => item.name);
+
       return withCors(
         request,
         NextResponse.json({
@@ -142,6 +146,7 @@ export async function GET(request: NextRequest) {
           content,
           images,
           imageLineIndexes,
+          convertedImages,
         }),
       );
     }
