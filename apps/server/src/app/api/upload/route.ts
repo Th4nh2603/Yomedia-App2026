@@ -29,7 +29,10 @@ function getCorsOrigin(request: NextRequest): string {
 
 function withCors(request: NextRequest, response: NextResponse) {
   response.headers.set("Access-Control-Allow-Origin", getCorsOrigin(request));
-  response.headers.set("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+  response.headers.set(
+    "Access-Control-Allow-Methods",
+    "GET,POST,DELETE,OPTIONS",
+  );
   response.headers.set("Access-Control-Allow-Headers", "Content-Type");
   return response;
 }
@@ -121,9 +124,12 @@ export async function GET(request: NextRequest) {
                 ? line.slice(afterNameIndex)
                 : line.slice(nextQuoteIndex);
             // Bỏ bớt 1 dấu " vì suffix đã chứa dấu " đóng chuỗi, tránh thành "...base64""" ,
-            const suffixAfterQuote = suffix.startsWith('"') ? suffix.slice(1) : suffix;
+            const suffixAfterQuote = suffix.startsWith('"')
+              ? suffix.slice(1)
+              : suffix;
 
-            lines[i] = `{type:createjs.AbstractLoader.IMAGE, src:"${dataUrl}"${suffixAfterQuote}`;
+            lines[i] =
+              `{type:createjs.Types.IMAGE, src:"${dataUrl}"${suffixAfterQuote}`;
             foundIndex = i;
             break;
           }
@@ -251,10 +257,7 @@ export async function DELETE(request: NextRequest) {
         .map((e) => unlink(path.join(UPLOAD_DIR, e.name)).catch(() => {})),
     );
 
-    return withCors(
-      request,
-      NextResponse.json({ ok: true, cleared: true }),
-    );
+    return withCors(request, NextResponse.json({ ok: true, cleared: true }));
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Clear failed";
     return withCors(

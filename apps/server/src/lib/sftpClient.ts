@@ -133,12 +133,21 @@ export async function writeSftpFile(
   }
 
   try {
+    const pathModule = await import("path");
+    const dir = pathModule.dirname(path || "/");
+
     await client.connect({
       host,
       port,
       username,
       password,
     });
+
+    if (dir && dir !== "." && dir !== "/") {
+      await (client as any).mkdir(dir, true).catch(() => {
+        // ignore mkdir errors (directory may already exist)
+      });
+    }
 
     const buffer = Buffer.from(content, "utf8");
     await client.put(buffer, path);
